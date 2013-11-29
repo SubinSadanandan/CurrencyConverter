@@ -11,12 +11,13 @@ namespace ConsoleApp_UniverseCurrencyConverter
     {
         Dictionary<string, string> storeCurrency = new Dictionary<string, string>();      
         Dictionary<string, float> LoadInitialData = new Dictionary<string, float>();
-       /// <summary>
+
+        /// <summary>
        /// Parses the Line & Get the equivalent Number for other currency
        /// </summary>
        /// <param name="fileName"></param>
        /// <returns></returns>
-        public Dictionary<string, float> ReadFileAndParseByLine(string fileName)
+        public Dictionary<string, float> ReadFileAndParseByLine(string fileName,ConverterOperations operations)
         {
             string line = string.Empty;
             Dictionary<string, float> string_NumberStore = new Dictionary<string, float>();
@@ -37,7 +38,7 @@ namespace ConsoleApp_UniverseCurrencyConverter
                         {
                             string[] split = new string[] { "(" };
                             string[] s = kvp.Key.Split(split, StringSplitOptions.RemoveEmptyEntries);
-                            int value = ConverterOperations.NumberConstruction(s[0].Replace(" ", string.Empty));
+                            int value = operations.NumberConstruction(s[0].Replace(" ", string.Empty));
                             if (value == 0)
                             {
                                 Console.WriteLine("Conversion Cannot be Done as Succession Criteria Fails ");
@@ -58,22 +59,6 @@ namespace ConsoleApp_UniverseCurrencyConverter
             }
             return string_NumberStore; 
         }
-
-        public void OutputData(Dictionary<string, string> storeConvertedCurrency)
-        {
-            foreach (KeyValuePair<string, string> kvp in storeConvertedCurrency)
-            {
-                if (!kvp.Key.Equals("Error"))
-                {
-                    Console.WriteLine(kvp.Key + " is " + kvp.Value);
-                }
-                else
-                {
-                    Console.WriteLine(kvp.Value);
-                }
-            }
-        }
-
         /// <summary>
         /// Parse only the lines which are not Queries
         /// </summary>
@@ -132,19 +117,29 @@ namespace ConsoleApp_UniverseCurrencyConverter
                 Console.WriteLine("Error Occured at Function-ParseLine()"+ ex.Message);
             }
         }
-
+        /// <summary>
+        /// Loads the dictionary with name & values as specified in Queries
+        /// </summary>
+        /// <param name="s"></param>
         private void GetInitialData(string[] s)
         {
             int value = Constants.GetInstance.GetValue(s[1]);
 
-            if (value != 0)
+            try
             {
-                LoadInitialData.Add(s[0], value);
+                if (value != 0)
+                {
+                    LoadInitialData.Add(s[0], value);
+                }
+                else
+                {
+                    string number = Regex.Match(s[1], @"\d+").Value;
+                    LoadInitialData.Add(s[0].Replace(" ", string.Empty), float.Parse(number));
+                }
             }
-            else
+            catch (Exception ex)
             {
-                string number = Regex.Match(s[1], @"\d+").Value;
-                LoadInitialData.Add(s[0].Replace(" ",string.Empty),float.Parse(number));
+                Console.WriteLine("Error Occured at function-GetInitialData() : " + ex.Message);
             }
         }
         /// <summary>
@@ -153,17 +148,16 @@ namespace ConsoleApp_UniverseCurrencyConverter
         /// <param name="fileName"></param>
         /// <param name="string_NumberStore"></param>
         /// <returns></returns>
-        public void SolveQuery(string fileName, Dictionary<string, float> string_NumberStore)
+        public void SolveQuery(string fileName, Dictionary<string, float> string_NumberStore,ConverterOperations operations)
         {
-            string line = string.Empty;
-            //Dictionary<string, string> storeConvertedCurrency = new Dictionary<string, string>();
+            string line = string.Empty;            
             try
             {
                 using (StreamReader file = new StreamReader(fileName))
                 {
                     while ((line = file.ReadLine()) != null)
                     {
-                        SolveEachQuery(line, string_NumberStore);
+                        SolveEachQuery(line, string_NumberStore,operations);
                     }
                 }
             }
@@ -179,14 +173,13 @@ namespace ConsoleApp_UniverseCurrencyConverter
         /// <param name="line"></param>
         /// <param name="string_NumberStore"></param>
         /// <param name="storeConvertedCurrency"></param>
-        public void SolveEachQuery(string line, Dictionary<string, float> string_NumberStore)
+        public void SolveEachQuery(string line, Dictionary<string, float> string_NumberStore,ConverterOperations operations)
         {
             string[] s = new string[30];
             string[] split = new string[] { " is " };
 
             try
             {
-
                 if (line.Contains(" is ") && line.Contains('?'))
                 {
                     s = line.Split(split, StringSplitOptions.RemoveEmptyEntries);
@@ -209,7 +202,7 @@ namespace ConsoleApp_UniverseCurrencyConverter
                         }
                     }
 
-                    float value = ConverterOperations.NumberConstruction(text.Replace(" ", string.Empty));
+                    float value = operations.NumberConstruction(text.Replace(" ", string.Empty));
 
                     foreach (string splitVal in splitValues)
                     {
@@ -234,25 +227,22 @@ namespace ConsoleApp_UniverseCurrencyConverter
                     {
                         if (s[0].Contains("Credits"))
                         {
-                            // storeConvertedCurrency.Add(storeOriginalText, value.ToString() + " Credits");
+                            
                             Console.WriteLine(storeOriginalText + " is " + value.ToString() + " Credits");
                         }
                         else
-                        {
-                            //storeConvertedCurrency.Add(storeOriginalText, value.ToString());
+                        {                            
                             Console.WriteLine(storeOriginalText + " is " + value.ToString());
                         }
                     }
                     else
                     {
                         if (s[0].Contains("Credits"))
-                        {
-                            //storeConvertedCurrency.Add(storeOriginalText, finalValue.ToString() + " Credits");
+                        {                            
                             Console.WriteLine(storeOriginalText + " is " + finalValue.ToString() + " Credits");
                         }
                         else
-                        {
-                            //storeConvertedCurrency.Add(storeOriginalText, finalValue.ToString());
+                        {                            
                             Console.WriteLine(storeOriginalText + " is " + finalValue.ToString());
                         }
                     }
@@ -260,8 +250,7 @@ namespace ConsoleApp_UniverseCurrencyConverter
                 else
                 {
                     if (line.Contains('?'))
-                    {
-                        //storeConvertedCurrency.Add("Error", "I have no idea what you are talking about");
+                    {                        
                         Console.WriteLine("I have no idea what you are talking about");
                     }
                 }

@@ -13,7 +13,7 @@ namespace ConsoleApp_UniverseCurrencyConverter
         /// </summary>
         /// <param name="currency">Roman Numbers</param>
         /// <returns>Returns the integer number if every criteria satisfies</returns>
-        public static int NumberConstruction(string currency)
+        public  int NumberConstruction(string currency)
         {
             int length = currency.Length;
             int i = 0, sum = 0; int first, second;
@@ -72,7 +72,7 @@ namespace ConsoleApp_UniverseCurrencyConverter
         /// which shows the count of successive characters if present
         /// </summary>
         /// <param name="currency"></param>
-        public static bool SuccessionCheck(string currency)
+        public  bool SuccessionCheck(string currency)
         {
             Dictionary<char, int> checkSuccessionCount = new Dictionary<char, int>();
             bool status = true;
@@ -127,7 +127,7 @@ namespace ConsoleApp_UniverseCurrencyConverter
         /// <param name="valueToSubstract">Value to be substracted</param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static bool CheckSubstractionLogic(string valueToSubstract, string value)
+        public  bool CheckSubstractionLogic(string valueToSubstract, string value)
         {
             bool status = false;
 
