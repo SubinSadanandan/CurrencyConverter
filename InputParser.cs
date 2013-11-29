@@ -153,7 +153,7 @@ namespace ConsoleApp_UniverseCurrencyConverter
         /// <param name="fileName"></param>
         /// <param name="string_NumberStore"></param>
         /// <returns></returns>
-        public Dictionary<string, string> SolveQuery(string fileName, Dictionary<string, float> string_NumberStore)
+        public void SolveQuery(string fileName, Dictionary<string, float> string_NumberStore)
         {
             string line = string.Empty;
             Dictionary<string, string> storeConvertedCurrency = new Dictionary<string, string>();
@@ -171,7 +171,7 @@ namespace ConsoleApp_UniverseCurrencyConverter
             {
                 Console.WriteLine("Error Occured at Function" + ex.Message);
             }
-            return storeConvertedCurrency;
+            
         }
         /// <summary>
         /// Function which Processes only the lines which are Queries & then returns the calculated Value
