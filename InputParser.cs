@@ -156,14 +156,14 @@ namespace ConsoleApp_UniverseCurrencyConverter
         public void SolveQuery(string fileName, Dictionary<string, float> string_NumberStore)
         {
             string line = string.Empty;
-            Dictionary<string, string> storeConvertedCurrency = new Dictionary<string, string>();
+            //Dictionary<string, string> storeConvertedCurrency = new Dictionary<string, string>();
             try
             {
                 using (StreamReader file = new StreamReader(fileName))
                 {
                     while ((line = file.ReadLine()) != null)
                     {
-                        SolveEachQuery(line, string_NumberStore, storeConvertedCurrency);
+                        SolveEachQuery(line, string_NumberStore);
                     }
                 }
             }
@@ -179,7 +179,7 @@ namespace ConsoleApp_UniverseCurrencyConverter
         /// <param name="line"></param>
         /// <param name="string_NumberStore"></param>
         /// <param name="storeConvertedCurrency"></param>
-        public void SolveEachQuery(string line, Dictionary<string, float> string_NumberStore, Dictionary<string, string> storeConvertedCurrency)
+        public void SolveEachQuery(string line, Dictionary<string, float> string_NumberStore)
         {
             string[] s = new string[30];
             string[] split = new string[] { " is " };
